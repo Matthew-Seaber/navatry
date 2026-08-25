@@ -29,7 +29,7 @@ import { toast } from "sonner";
 countries.registerLocale(en);
 
 interface VisitedCountry {
-  countryCode: string;
+  id: string;
   name: string;
   continent: string;
   description: string;
@@ -58,7 +58,7 @@ function CountriesVisitedMap({
   const [specialRegions, setSpecialRegions] = useState<Feature[]>([]);
   const [markVisitedPopupOpen, setMarkVisitedPopupOpen] = useState(false);
   const [removeVisitedPopupOpen, setRemoveVisitedPopupOpen] = useState(false);
-  const [selectedCountryCode, setSelectedCountryCode] = useState("");
+  const [selectedCountryId, setSelectedCountryId] = useState("");
   const [selectedCountryName, setSelectedCountryName] = useState("");
   const [zoomLevel, setZoomLevel] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -66,7 +66,7 @@ function CountriesVisitedMap({
   const { openPane, closePane } = useInfoPane();
 
   const visitedSet = useMemo(
-    () => new Set(visitedCountries.map((country) => country.countryCode)),
+    () => new Set(visitedCountries.map((country) => country.id)),
     [visitedCountries],
   );
 
@@ -170,7 +170,7 @@ function CountriesVisitedMap({
   };
 
   async function handleMarkAsVisited() {
-    if (!selectedCountryCode) return;
+    if (!selectedCountryId) return;
 
     try {
       const response = await fetch("/api/countries/mark_visited", {
@@ -178,7 +178,7 @@ function CountriesVisitedMap({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ countryId: selectedCountryCode }),
+        body: JSON.stringify({ countryId: selectedCountryId }),
       });
 
       if (!response.ok) {
@@ -186,7 +186,7 @@ function CountriesVisitedMap({
       }
 
       toast.success(
-        `Successfully marked ${selectedCountryName || selectedCountryCode} as visited!`,
+        `Successfully marked ${selectedCountryName || selectedCountryId} as visited!`,
       );
 
       closePane();
@@ -201,7 +201,7 @@ function CountriesVisitedMap({
   }
 
   async function handleRemoveVisited() {
-    if (!selectedCountryCode) return;
+    if (!selectedCountryId) return;
 
     try {
       const response = await fetch("/api/countries/delete_visited_status", {
@@ -209,7 +209,7 @@ function CountriesVisitedMap({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ countryId: selectedCountryCode, type: "code" }),
+        body: JSON.stringify({ countryId: selectedCountryId }),
       });
 
       if (!response.ok) {
@@ -217,7 +217,7 @@ function CountriesVisitedMap({
       }
 
       toast.success(
-        `Successfully removed visited status from ${selectedCountryName || selectedCountryCode}.`,
+        `Successfully removed visited status from ${selectedCountryName || selectedCountryId}.`,
       );
 
       closePane();
@@ -307,7 +307,7 @@ function CountriesVisitedMap({
                         const clickedCountryName =
                           country.properties.name || clickedCountryCode;
 
-                        setSelectedCountryCode(clickedCountryCode);
+                        setSelectedCountryId(clickedCountryCode);
                         setSelectedCountryName(clickedCountryName);
 
                         if (isVisited === false) {
@@ -330,7 +330,7 @@ function CountriesVisitedMap({
                       ${
                         visitedCountries.some(
                           (country) =>
-                            country.countryCode ===
+                            country.id ===
                             region.properties?.countryCode,
                         )
                           ? "fill-primary"
@@ -359,7 +359,7 @@ function CountriesVisitedMap({
         open={markVisitedPopupOpen}
         setOpen={setMarkVisitedPopupOpen}
         title="Mark as visited"
-        message={`Are you sure you want to mark '${selectedCountryName || selectedCountryCode}' as visited?`}
+        message={`Are you sure you want to mark '${selectedCountryName || selectedCountryId}' as visited?`}
         destructive={false}
         confirmText="Mark as visited"
         cancelText="Cancel"
@@ -370,7 +370,7 @@ function CountriesVisitedMap({
         open={removeVisitedPopupOpen}
         setOpen={setRemoveVisitedPopupOpen}
         title="Remove visited status"
-        message={`Are you sure you want to mark ${selectedCountryName || selectedCountryCode} as 'not visited?'`}
+        message={`Are you sure you want to mark ${selectedCountryName || selectedCountryId} as 'not visited?'`}
         destructive={true}
         confirmText="Confirm"
         cancelText="Cancel"

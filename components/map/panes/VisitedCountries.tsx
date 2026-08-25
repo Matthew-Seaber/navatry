@@ -38,7 +38,6 @@ import { toast } from "sonner";
 
 interface VisitedCountry {
   id: string;
-  countryCode: string;
   name: string;
   continent: string;
   description: string;
@@ -150,7 +149,7 @@ function VisitedCountries({
       <div className="grid grid-cols-1 min-[440px]:grid-cols-2 gap-2">
         {visitedCountries.map((country) => (
           <div
-            key={country.countryCode}
+            key={country.id}
             onClick={() => {
               setSelectedCountryID(country.id);
               setDialogOpen(true);

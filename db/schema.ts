@@ -107,7 +107,6 @@ export const notifications = pgTable(
 export const countries = pgTable("countries", {
   id: text("id").primaryKey(),
   countryName: text("country_name").notNull().unique(),
-  countryCode: text("country_code").notNull().unique(),
   continent: text("continent").notNull(),
   description: text("description"),
   flag: text("flag").notNull(),
